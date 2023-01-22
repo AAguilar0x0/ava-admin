@@ -1019,6 +1019,18 @@ grapheme-splitter@^1.0.4:
   resolved "https://registry.yarnpkg.com/grapheme-splitter/-/grapheme-splitter-1.0.4.tgz#9cf3a665c6247479896834af35cf1dbb4400767e"
   integrity sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==
 
+gridjs-svelte@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/gridjs-svelte/-/gridjs-svelte-2.1.1.tgz#1356ed519aafe20ffd1c8195945e4ac598e2d3ec"
+  integrity sha512-tYkgdqNKSnfmAYYc8EP4axn/Xlugp7VLwAlpNkP4SBLHHYD/ejD2DJ+FMatDNqcJ1Z1kuMnJWO+VBcAOirEByw==
+
+gridjs@^6.0.5:
+  version "6.0.5"
+  resolved "https://registry.yarnpkg.com/gridjs/-/gridjs-6.0.5.tgz#1d2ac11edb8663340f5cf9ab3acafd47c1051cf8"
+  integrity sha512-dpGi1eK27tnplumOOrYOIQEJJaPZcx6kzexQTqtNN0CBKEVJBpFvbCJgk7xZyRMF42RoCT6BYRcQjzXCpQXbvQ==
+  dependencies:
+    preact "^10.11.3"
+
 has-flag@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/has-flag/-/has-flag-4.0.0.tgz#944771fd9c81c81265c4d6941860da06bb59479b"
@@ -1420,6 +1432,11 @@ postcss@^8.4.18, postcss@^8.4.20, postcss@^8.4.21:
     nanoid "^3.3.4"
     picocolors "^1.0.0"
     source-map-js "^1.0.2"
+
+preact@^10.11.3:
+  version "10.11.3"
+  resolved "https://registry.yarnpkg.com/preact/-/preact-10.11.3.tgz#8a7e4ba19d3992c488b0785afcc0f8aa13c78d19"
+  integrity sha512-eY93IVpod/zG3uMF22Unl8h9KkrcKIRs2EGar8hwLZZDU1lkjph303V9HZBwufh2s736U6VXuhD109LYqPoffg==
 
 prelude-ls@^1.2.1:
   version "1.2.1"
