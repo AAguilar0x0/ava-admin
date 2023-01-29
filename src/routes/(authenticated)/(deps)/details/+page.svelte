@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { getContext } from 'svelte';
   import Editor from '@tinymce/tinymce-svelte';
   import Dialog, { Header, Title, Content, Actions } from '@smui/dialog';
   import IconButton from '@smui/icon-button';
@@ -11,17 +12,23 @@
   import { h } from 'gridjs';
   import Grid from 'gridjs-svelte';
   import type { PageData } from './$types';
+  import type { TSnackbarStatus } from '$lib/types/SnackbarStatus';
 
   const MODAL_STATES = ['Init', 'Add', 'Edit'] as const;
+  type ModalState = (typeof MODAL_STATES)[number];
 
   export let data: PageData;
   $: details = data?.details ?? [];
+
+  const { pushSnackbar }: { pushSnackbar: (message: string, status: TSnackbarStatus) => void } =
+    getContext('snackbar');
 
   let open = false;
 
   let inptName = '';
   let inptDesc = '';
-  let modalState: (typeof MODAL_STATES)[number] = 'Init';
+  let textDesc = '';
+  let modalState: ModalState;
 
   let detailID = '';
 
@@ -92,6 +99,7 @@
     try {
       let result = await fetch(`/api/details/${id}`, { method: 'DELETE' });
       if (!result.ok) throw new Error(result.statusText);
+      pushSnackbar('Detail deleted successfully!', 'success');
       refreshData();
     } catch (error) {}
   }
@@ -107,6 +115,7 @@
         })
       });
       if (!result.ok) throw new Error(result.statusText);
+      pushSnackbar('Detail added successfully!', 'success');
       refreshData();
     } catch (error) {}
   }
@@ -121,11 +130,32 @@
         })
       });
       if (!result.ok) throw new Error(result.statusText);
+      pushSnackbar('Detail edited successfully!', 'success');
       refreshData();
     } catch (error) {}
   }
 
   async function handleSubmit() {
+    switch (modalState) {
+      case MODAL_STATES[1]:
+      case MODAL_STATES[2]:
+        let message = '';
+        let nameLen = inptName.trim().length;
+        let descLen = textDesc.trim().length;
+        if (nameLen === 0 && descLen === 0) {
+          message = 'Name and description is required.';
+        } else if (nameLen === 0) {
+          message = 'Name is required.';
+        } else if (descLen === 0) {
+          message = 'Description is required.';
+        }
+        if (message.length !== 0) {
+          pushSnackbar(message, 'error');
+          return;
+        }
+      default:
+        break;
+    }
     switch (modalState) {
       case MODAL_STATES[1]:
         await handleAdd();
@@ -137,6 +167,7 @@
       default:
         break;
     }
+    open = false;
   }
 </script>
 
@@ -168,6 +199,7 @@
       <h2>Description</h2>
       <Editor
         bind:value={inptDesc}
+        bind:text={textDesc}
         scriptSrc="tinymce/tinymce.min.js"
         cssClass="w-full"
         conf={{
@@ -181,7 +213,7 @@
     </div>
   </Content>
   <Actions>
-    <Button on:click={handleSubmit}>
+    <Button action="" on:click={handleSubmit}>
       <Label>Submit</Label>
     </Button>
   </Actions>
