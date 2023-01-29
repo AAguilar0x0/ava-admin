@@ -1,3 +1,7 @@
+<script lang="ts">
+  import 'gridjs/dist/theme/mermaid.css';
+</script>
+
 <svelte:head>
   <!-- Material Icons -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
@@ -10,7 +14,6 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono" />
   <!-- SMUI Styles -->
   <link rel="stylesheet" href="/smui.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridjs/dist/theme/mermaid.min.css" />
 </svelte:head>
 
 <div class="m-2 p-2">
