@@ -3,6 +3,8 @@ node_modules
 /build
 /.svelte-kit
 /package
+/static/tinymce
+/static/smui.css
 .env
 .env.*
 !.env.example
