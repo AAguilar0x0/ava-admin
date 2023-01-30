@@ -61,7 +61,6 @@
               className:
                 'py-2 mb-4 px-4 border rounded-md text-white bg-blue-500 hover:bg-blue-700',
               onClick: () => {
-                console.log('HERE', row);
                 detailID = row.cells[0].data;
                 inptName = row.cells[1].data;
                 inptDesc = row.cells[2].data;

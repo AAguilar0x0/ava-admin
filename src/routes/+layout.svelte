@@ -15,22 +15,20 @@
       let addedClass = '';
       switch (status) {
         case SnackbarStatus[1]:
-          addedClass = 'bg-green-500';
+          addedClass = '!bg-green-500';
           break;
         case SnackbarStatus[2]:
-          addedClass = 'bg-yellow-500';
+          addedClass = '!bg-yellow-500';
           break;
         case SnackbarStatus[3]:
-          addedClass = 'bg-red-500';
+          addedClass = '!bg-red-500';
           break;
         case SnackbarStatus[0]:
         default:
           addedClass = '';
           break;
       }
-      console.log('HERE', snackbar.getElement().children[0].classList.value);
       snackbar.getElement().children[0].classList.value = `${className} ${addedClass}`;
-      console.log('HERE', snackbar.getElement().children[0].classList.value);
       // @ts-ignore
       snackbar.open();
     }
