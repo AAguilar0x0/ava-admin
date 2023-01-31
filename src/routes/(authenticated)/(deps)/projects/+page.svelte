@@ -1,10 +1,10 @@
 <script lang="ts">
   import { getContext } from 'svelte';
-  import Editor from '@tinymce/tinymce-svelte';
   import Dialog, { Header, Title, Content, Actions } from '@smui/dialog';
   import IconButton from '@smui/icon-button';
   import Textfield from '@smui/textfield';
   import Button, { Label } from '@smui/button';
+  import Select, { Option } from '@smui/select';
   import Icon from '@iconify/svelte';
   import { h } from 'gridjs';
   import Grid from 'gridjs-svelte';
@@ -16,38 +16,37 @@
   type ModalState = (typeof MODAL_STATES)[number];
 
   export let data: PageData;
-  $: details = data?.details ?? [];
+  $: techStack = new Set(data?.techStack?.map((val) => val.name) ?? []);
+  $: projects = data?.projects ?? [];
 
   const { pushSnackbar }: { pushSnackbar: (message: string, status: TSnackbarStatus) => void } =
     getContext('snackbar');
 
   let open = false;
 
+  let techStackInput: string | undefined = '';
+
   let inptName = '';
-  let inptDesc = '';
-  let textDesc = '';
+  let inptCompany = '';
+  let inptRepo = '';
+  let inptURL = '';
+  let inptTechStack: Set<string> = new Set();
   let modalState: ModalState;
 
-  let detailID = '';
+  let projectId = '';
 
   let columns = [
     { name: 'ID', sort: true },
     { name: 'Name', sort: true },
+    { name: 'Company', sort: true },
+    { name: 'Repo', sort: true },
+    { name: 'URL', sort: true },
     {
-      name: 'Description',
+      name: 'Tech Stack',
       sort: true,
-      formatter: (cell: string) => {
-        return h(
-          'p',
-          {
-            className: 'truncate text-ellipsis'
-          },
-          cell
-        );
-      },
-      width: '20%'
+      data: (row: any) => row.tech_stack,
+      formatter: (cell: any) => cell.join(', ')
     },
-    { name: 'Image', sort: true, hidden: true },
     {
       name: 'Actions',
       sort: false,
@@ -59,9 +58,12 @@
               className:
                 'py-2 mb-4 px-4 border rounded-md text-white bg-blue-500 hover:bg-blue-700',
               onClick: () => {
-                detailID = row.cells[0].data;
+                projectId = row.cells[0].data;
                 inptName = row.cells[1].data;
-                inptDesc = row.cells[2].data;
+                inptCompany = row.cells[2].data;
+                inptRepo = row.cells[3].data;
+                inptURL = row.cells[4].data;
+                inptTechStack = new Set(row.cells[5].data);
                 modalState = MODAL_STATES[2];
                 open = true;
               }
@@ -89,9 +91,9 @@
 
   async function handDelete(id: string) {
     try {
-      let result = await fetch(`/api/details/${id}`, { method: 'DELETE' });
+      let result = await fetch(`/api/projects/${id}`, { method: 'DELETE' });
       if (!result.ok) throw new Error(result.statusText);
-      pushSnackbar('Detail deleted successfully!', 'success');
+      pushSnackbar('Project deleted successfully!', 'success');
       refreshData();
     } catch (error) {
       pushSnackbar(`Error: ${(error as Error)?.message ?? (error as Error).name}`, 'error');
@@ -100,16 +102,18 @@
 
   async function handleAdd() {
     try {
-      let result = await fetch('/api/details', {
+      let result = await fetch('/api/projects', {
         method: 'POST',
         body: JSON.stringify({
           name: inptName,
-          description: inptDesc,
-          image: ''
+          company: inptCompany,
+          repo: inptRepo,
+          url: inptURL,
+          tech_stack: Array.from(inptTechStack)
         })
       });
       if (!result.ok) throw new Error(result.statusText);
-      pushSnackbar('Detail added successfully!', 'success');
+      pushSnackbar('Project added successfully!', 'success');
       refreshData();
     } catch (error) {
       pushSnackbar(`Error: ${(error as Error)?.message ?? (error as Error).name}`, 'error');
@@ -118,15 +122,18 @@
 
   async function handleEdit() {
     try {
-      let result = await fetch(`/api/details/${detailID}`, {
+      let result = await fetch(`/api/projects/${projectId}`, {
         method: 'PUT',
         body: JSON.stringify({
           name: inptName,
-          description: inptDesc
+          company: inptCompany,
+          repo: inptRepo,
+          url: inptURL,
+          tech_stack: Array.from(inptTechStack)
         })
       });
       if (!result.ok) throw new Error(result.statusText);
-      pushSnackbar('Detail edited successfully!', 'success');
+      pushSnackbar('Project edited successfully!', 'success');
       refreshData();
     } catch (error) {
       pushSnackbar(`Error: ${(error as Error)?.message ?? (error as Error).name}`, 'error');
@@ -139,13 +146,13 @@
       case MODAL_STATES[2]:
         let message = '';
         let nameLen = inptName.trim().length;
-        let descLen = textDesc.trim().length;
-        if (nameLen === 0 && descLen === 0) {
-          message = 'Name and description is required.';
+        let companyLen = inptCompany.trim().length;
+        if (nameLen === 0 && companyLen === 0) {
+          message = 'Name and company is required.';
         } else if (nameLen === 0) {
           message = 'Name is required.';
-        } else if (descLen === 0) {
-          message = 'Description is required.';
+        } else if (companyLen === 0) {
+          message = 'Company is required.';
         }
         if (message.length !== 0) {
           pushSnackbar(message, 'error');
@@ -170,11 +177,14 @@
 </script>
 
 <div class="flex flex-inline flex-wrap gap-1">
-  <span class="text-2xl font-semibold">Details</span>
+  <span class="text-2xl font-semibold">Projects</span>
   <button
     on:click={() => {
       inptName = '';
-      inptDesc = '<p></p>';
+      inptCompany = '';
+      inptRepo = '';
+      inptURL = '';
+      inptTechStack = new Set();
       modalState = MODAL_STATES[1];
       open = true;
     }}
@@ -182,32 +192,73 @@
     <Icon icon="mdi:plus-thick" class="text-3xl text-green-500 hover:text-green-700" />
   </button>
 </div>
-<Grid data={details} fixedHeader search resizable pagination {columns} />
+<Grid data={projects} fixedHeader search resizable pagination {columns} />
 <Dialog bind:open fullscreen>
   <Header>
-    <Title id="fullscreen-title">Add/Edit Details</Title>
+    <Title id="fullscreen-title">Add/Edit Projects</Title>
     <IconButton action="close" class="material-icons">close</IconButton>
   </Header>
   <Content id="fullscreen-content">
-    <div class="p-3">
-      <h2>Name</h2>
-      <Textfield bind:value={inptName} class="w-full" />
-    </div>
-    <div class="p-3">
-      <h2>Description</h2>
-      <Editor
-        bind:value={inptDesc}
-        bind:text={textDesc}
-        scriptSrc="tinymce/tinymce.min.js"
-        cssClass="w-full"
-        conf={{
-          plugins: 'advlist lists wordcount pagebreak quickbars emoticons',
-          toolbar:
-            'undo redo | bold italic underline strikethrough | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist',
-          quickbars_image_toolbar: false,
-          quickbars_insert_toolbar: 'quicktable hr pagebreak'
-        }}
-      />
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <h2>Name</h2>
+        <Textfield bind:value={inptName} class="w-full" />
+      </div>
+      <div>
+        <h2>Company</h2>
+        <Textfield bind:value={inptCompany} class="w-full" />
+      </div>
+      <div>
+        <h2>Repo</h2>
+        <Textfield bind:value={inptRepo} class="w-full" />
+      </div>
+      <div>
+        <h2>URL</h2>
+        <Textfield bind:value={inptURL} class="w-full" />
+      </div>
+      <h2 class="col-span-2">Tech Stack</h2>
+      <div class="inline-flex h-fit">
+        <Select bind:value={techStackInput} class="w-full">
+          {#each Array.from(techStack).filter((value) => !inptTechStack.has(value)) as tech}
+            <Option value={tech}>{tech}</Option>
+          {/each}
+        </Select>
+        <button
+          disabled={!techStackInput || techStackInput.trim().length === 0}
+          on:click={() => {
+            // @ts-ignore - because this wont execute if the button is disabled which also happens when the variable is undefined
+            inptTechStack.add(techStackInput);
+            inptTechStack = inptTechStack;
+            techStackInput = '';
+          }}
+        >
+          <Icon
+            icon="mdi:plus-thick"
+            class={`text-3xl ${
+              !techStackInput || techStackInput.trim().length === 0
+                ? ''
+                : 'text-green-500 hover:text-green-700'
+            }`}
+          />
+        </button>
+      </div>
+      <div>
+        <div class="flex flex-col gap-1">
+          {#each Array.from(inptTechStack) as techStack}
+            <div class="flex flex-row flex-wrap justify-between bg-neutral-50 rounded-sm px-1">
+              <span>{techStack}</span>
+              <button
+                on:click={() => {
+                  inptTechStack.delete(techStack);
+                  inptTechStack = inptTechStack;
+                }}
+              >
+                <Icon icon="mdi:minus-thick" class="text-red-500 hover:text-red-700" />
+              </button>
+            </div>
+          {/each}
+        </div>
+      </div>
     </div>
   </Content>
   <Actions>
