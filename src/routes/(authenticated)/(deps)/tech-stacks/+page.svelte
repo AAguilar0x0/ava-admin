@@ -29,9 +29,9 @@
   let techStackId = '';
 
   let columns = [
-    { name: 'ID', sort: true },
-    { name: 'Name', sort: true },
-    { name: 'Category', sort: true },
+    { name: 'ID' },
+    { name: 'Name' },
+    { name: 'Category' },
     {
       name: 'Actions',
       sort: false,
@@ -152,7 +152,7 @@
   }
 </script>
 
-<div class="flex flex-inline flex-wrap gap-1">
+<div class="flex-inline flex flex-wrap gap-1">
   <span class="text-2xl font-semibold">Tech Stacks</span>
   <button
     on:click={() => {
@@ -165,7 +165,7 @@
     <Icon icon="mdi:plus-thick" class="text-3xl text-green-500 hover:text-green-700" />
   </button>
 </div>
-<Grid data={techStack} fixedHeader search resizable pagination {columns} />
+<Grid data={techStack} {columns} fixedHeader search resizable pagination sort />
 <Dialog bind:open fullscreen>
   <Header>
     <Title id="fullscreen-title">Add/Edit Tech Stacks</Title>
@@ -173,11 +173,11 @@
   </Header>
   <Content id="fullscreen-content">
     <div class="flex flex-row flex-wrap">
-      <div class="p-3 grow">
+      <div class="grow p-3">
         <h2>Name</h2>
         <Textfield bind:value={inptName} class="w-full" />
       </div>
-      <div class="p-3 grow">
+      <div class="grow p-3">
         <h2>Category</h2>
         <Textfield bind:value={inptCategory} class="w-full" />
       </div>
