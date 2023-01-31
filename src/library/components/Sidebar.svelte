@@ -6,21 +6,21 @@
 <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" />
 
 <div>
-  <div class="min-h-screen flex flex-row bg-gray-100">
-    <div class="flex flex-col min-w-fit bg-white overflow-hidden">
-      <div class="flex items-center justify-center h-20">
+  <div class="flex min-h-screen flex-row bg-gray-100">
+    <div class="flex min-w-fit flex-col overflow-hidden bg-white">
+      <div class="flex h-20 items-center justify-center">
         <a href="/">
           <h1 class="text-3xl uppercase text-indigo-500">Admin</h1>
         </a>
       </div>
-      <ul class="flex flex-col py-4 ml-3 mr-14">
+      <ul class="ml-3 mr-14 flex flex-col py-4">
         {#each routes as [title, route, icon]}
           <li>
             <a
               href={route}
-              class="flex flex-row items-center h-12 gap-2 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800"
+              class="flex h-12 transform flex-row items-center gap-2 text-gray-500 transition-transform duration-200 ease-in hover:translate-x-2 hover:text-gray-800"
             >
-              <span class="inline-flex items-center justify-center w-5 h-5 text-lg text-gray-400"
+              <span class="inline-flex h-5 w-5 items-center justify-center text-lg text-gray-400"
                 ><Icon {icon} /></span
               >
               <span class="text-sm font-medium">{title}</span>

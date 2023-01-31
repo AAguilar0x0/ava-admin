@@ -39,12 +39,11 @@
   let experienceId = '';
 
   let columns = [
-    { name: 'ID', sort: true },
-    { name: 'Role', sort: true },
-    { name: 'Company', sort: true },
+    { name: 'ID' },
+    { name: 'Role' },
+    { name: 'Company' },
     {
       name: 'Description',
-      sort: true,
       attributes: (cell: any) => {
         if (cell) {
           return {
@@ -211,7 +210,7 @@
   }
 </script>
 
-<div class="flex flex-inline flex-wrap gap-1">
+<div class="flex-inline flex flex-wrap gap-1">
   <span class="text-2xl font-semibold">Experiences</span>
   <button
     on:click={() => {
@@ -228,7 +227,7 @@
     <Icon icon="mdi:plus-thick" class="text-3xl text-green-500 hover:text-green-700" />
   </button>
 </div>
-<Grid data={experiences} fixedHeader search resizable pagination {columns} />
+<Grid data={experiences} {columns} fixedHeader search resizable pagination sort />
 <Dialog bind:open fullscreen>
   <Header>
     <Title id="fullscreen-title">Add/Edit Experiences</Title>
@@ -297,7 +296,7 @@
       <div>
         <div class="flex flex-col gap-1">
           {#each Array.from(inptTechStack) as techStack}
-            <div class="flex flex-row flex-wrap justify-between bg-neutral-50 rounded-sm px-1">
+            <div class="flex flex-row flex-wrap justify-between rounded-sm bg-neutral-50 px-1">
               <span>{techStack}</span>
               <button
                 on:click={() => {
