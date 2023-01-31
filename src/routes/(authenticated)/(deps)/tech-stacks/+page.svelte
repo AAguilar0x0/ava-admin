@@ -1,6 +1,5 @@
 <script lang="ts">
   import { getContext } from 'svelte';
-  import Editor from '@tinymce/tinymce-svelte';
   import Dialog, { Header, Title, Content, Actions } from '@smui/dialog';
   import IconButton from '@smui/icon-button';
   import Textfield from '@smui/textfield';
@@ -16,7 +15,7 @@
   type ModalState = (typeof MODAL_STATES)[number];
 
   export let data: PageData;
-  $: details = data?.details ?? [];
+  $: techStack = data?.techStack ?? [];
 
   const { pushSnackbar }: { pushSnackbar: (message: string, status: TSnackbarStatus) => void } =
     getContext('snackbar');
@@ -24,30 +23,15 @@
   let open = false;
 
   let inptName = '';
-  let inptDesc = '';
-  let textDesc = '';
+  let inptCategory = '';
   let modalState: ModalState;
 
-  let detailID = '';
+  let techStackId = '';
 
   let columns = [
     { name: 'ID', sort: true },
     { name: 'Name', sort: true },
-    {
-      name: 'Description',
-      sort: true,
-      formatter: (cell: string) => {
-        return h(
-          'p',
-          {
-            className: 'truncate text-ellipsis'
-          },
-          cell
-        );
-      },
-      width: '20%'
-    },
-    { name: 'Image', sort: true, hidden: true },
+    { name: 'Category', sort: true },
     {
       name: 'Actions',
       sort: false,
@@ -59,9 +43,9 @@
               className:
                 'py-2 mb-4 px-4 border rounded-md text-white bg-blue-500 hover:bg-blue-700',
               onClick: () => {
-                detailID = row.cells[0].data;
+                techStackId = row.cells[0].data;
                 inptName = row.cells[1].data;
-                inptDesc = row.cells[2].data;
+                inptCategory = row.cells[2].data;
                 modalState = MODAL_STATES[2];
                 open = true;
               }
@@ -89,9 +73,9 @@
 
   async function handDelete(id: string) {
     try {
-      let result = await fetch(`/api/details/${id}`, { method: 'DELETE' });
+      let result = await fetch(`/api/tech-stacks/${id}`, { method: 'DELETE' });
       if (!result.ok) throw new Error(result.statusText);
-      pushSnackbar('Detail deleted successfully!', 'success');
+      pushSnackbar('Tech Stack deleted successfully!', 'success');
       refreshData();
     } catch (error) {
       pushSnackbar(`Error: ${(error as Error)?.message ?? (error as Error).name}`, 'error');
@@ -100,16 +84,15 @@
 
   async function handleAdd() {
     try {
-      let result = await fetch('/api/details', {
+      let result = await fetch('/api/tech-stacks', {
         method: 'POST',
         body: JSON.stringify({
           name: inptName,
-          description: inptDesc,
-          image: ''
+          category: inptCategory
         })
       });
       if (!result.ok) throw new Error(result.statusText);
-      pushSnackbar('Detail added successfully!', 'success');
+      pushSnackbar('Tech Stack added successfully!', 'success');
       refreshData();
     } catch (error) {
       pushSnackbar(`Error: ${(error as Error)?.message ?? (error as Error).name}`, 'error');
@@ -118,15 +101,15 @@
 
   async function handleEdit() {
     try {
-      let result = await fetch(`/api/details/${detailID}`, {
+      let result = await fetch(`/api/tech-stacks/${techStackId}`, {
         method: 'PUT',
         body: JSON.stringify({
           name: inptName,
-          description: inptDesc
+          category: inptCategory
         })
       });
       if (!result.ok) throw new Error(result.statusText);
-      pushSnackbar('Detail edited successfully!', 'success');
+      pushSnackbar('Tech Stack edited successfully!', 'success');
       refreshData();
     } catch (error) {
       pushSnackbar(`Error: ${(error as Error)?.message ?? (error as Error).name}`, 'error');
@@ -139,13 +122,13 @@
       case MODAL_STATES[2]:
         let message = '';
         let nameLen = inptName.trim().length;
-        let descLen = textDesc.trim().length;
-        if (nameLen === 0 && descLen === 0) {
-          message = 'Name and description is required.';
+        let categoryLen = inptCategory.trim().length;
+        if (nameLen === 0 && categoryLen === 0) {
+          message = 'Name and category is required.';
         } else if (nameLen === 0) {
           message = 'Name is required.';
-        } else if (descLen === 0) {
-          message = 'Description is required.';
+        } else if (categoryLen === 0) {
+          message = 'Category is required.';
         }
         if (message.length !== 0) {
           pushSnackbar(message, 'error');
@@ -170,11 +153,11 @@
 </script>
 
 <div class="flex flex-inline flex-wrap gap-1">
-  <span class="text-2xl font-semibold">Details</span>
+  <span class="text-2xl font-semibold">Tech Stacks</span>
   <button
     on:click={() => {
       inptName = '';
-      inptDesc = '<p></p>';
+      inptCategory = '';
       modalState = MODAL_STATES[1];
       open = true;
     }}
@@ -182,32 +165,22 @@
     <Icon icon="mdi:plus-thick" class="text-3xl text-green-500 hover:text-green-700" />
   </button>
 </div>
-<Grid data={details} fixedHeader search resizable pagination {columns} />
+<Grid data={techStack} fixedHeader search resizable pagination {columns} />
 <Dialog bind:open fullscreen>
   <Header>
-    <Title id="fullscreen-title">Add/Edit Details</Title>
+    <Title id="fullscreen-title">Add/Edit Tech Stacks</Title>
     <IconButton action="close" class="material-icons">close</IconButton>
   </Header>
   <Content id="fullscreen-content">
-    <div class="p-3">
-      <h2>Name</h2>
-      <Textfield bind:value={inptName} class="w-full" />
-    </div>
-    <div class="p-3">
-      <h2>Description</h2>
-      <Editor
-        bind:value={inptDesc}
-        bind:text={textDesc}
-        scriptSrc="tinymce/tinymce.min.js"
-        cssClass="w-full"
-        conf={{
-          plugins: 'advlist lists wordcount pagebreak quickbars emoticons',
-          toolbar:
-            'undo redo | bold italic underline strikethrough | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist',
-          quickbars_image_toolbar: false,
-          quickbars_insert_toolbar: 'quicktable hr pagebreak'
-        }}
-      />
+    <div class="flex flex-row flex-wrap">
+      <div class="p-3 grow">
+        <h2>Name</h2>
+        <Textfield bind:value={inptName} class="w-full" />
+      </div>
+      <div class="p-3 grow">
+        <h2>Category</h2>
+        <Textfield bind:value={inptCategory} class="w-full" />
+      </div>
     </div>
   </Content>
   <Actions>
