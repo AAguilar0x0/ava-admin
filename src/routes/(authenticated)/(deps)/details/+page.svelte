@@ -31,11 +31,10 @@
   let detailID = '';
 
   let columns = [
-    { name: 'ID', sort: true },
-    { name: 'Name', sort: true },
+    { name: 'ID' },
+    { name: 'Name' },
     {
       name: 'Description',
-      sort: true,
       formatter: (cell: string) => {
         return h(
           'p',
@@ -47,7 +46,7 @@
       },
       width: '20%'
     },
-    { name: 'Image', sort: true, hidden: true },
+    { name: 'Image', hidden: true },
     {
       name: 'Actions',
       sort: false,
@@ -169,7 +168,7 @@
   }
 </script>
 
-<div class="flex flex-inline flex-wrap gap-1">
+<div class="flex-inline flex flex-wrap gap-1">
   <span class="text-2xl font-semibold">Details</span>
   <button
     on:click={() => {
@@ -182,7 +181,7 @@
     <Icon icon="mdi:plus-thick" class="text-3xl text-green-500 hover:text-green-700" />
   </button>
 </div>
-<Grid data={details} fixedHeader search resizable pagination {columns} />
+<Grid data={details} {columns} fixedHeader search resizable pagination sort />
 <Dialog bind:open fullscreen>
   <Header>
     <Title id="fullscreen-title">Add/Edit Details</Title>

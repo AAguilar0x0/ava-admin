@@ -36,14 +36,13 @@
   let projectId = '';
 
   let columns = [
-    { name: 'ID', sort: true },
-    { name: 'Name', sort: true },
-    { name: 'Company', sort: true },
-    { name: 'Repo', sort: true },
-    { name: 'URL', sort: true },
+    { name: 'ID' },
+    { name: 'Name' },
+    { name: 'Company' },
+    { name: 'Repo' },
+    { name: 'URL' },
     {
       name: 'Tech Stack',
-      sort: true,
       data: (row: any) => row.tech_stack,
       formatter: (cell: any) => cell.join(', ')
     },
@@ -176,7 +175,7 @@
   }
 </script>
 
-<div class="flex flex-inline flex-wrap gap-1">
+<div class="flex-inline flex flex-wrap gap-1">
   <span class="text-2xl font-semibold">Projects</span>
   <button
     on:click={() => {
@@ -192,7 +191,7 @@
     <Icon icon="mdi:plus-thick" class="text-3xl text-green-500 hover:text-green-700" />
   </button>
 </div>
-<Grid data={projects} fixedHeader search resizable pagination {columns} />
+<Grid data={projects} {columns} fixedHeader search resizable pagination sort />
 <Dialog bind:open fullscreen>
   <Header>
     <Title id="fullscreen-title">Add/Edit Projects</Title>
@@ -245,7 +244,7 @@
       <div>
         <div class="flex flex-col gap-1">
           {#each Array.from(inptTechStack) as techStack}
-            <div class="flex flex-row flex-wrap justify-between bg-neutral-50 rounded-sm px-1">
+            <div class="flex flex-row flex-wrap justify-between rounded-sm bg-neutral-50 px-1">
               <span>{techStack}</span>
               <button
                 on:click={() => {

@@ -1,8 +1,8 @@
-<div class="flex items-center justify-center w-full min-h-screen">
-  <div class="flex justify-center items-center space-x-1 text-sm text-gray-700">
+<div class="flex min-h-screen w-full items-center justify-center">
+  <div class="flex items-center justify-center space-x-1 text-sm text-gray-700">
     <svg
       fill="none"
-      class="w-6 h-6 animate-spin"
+      class="h-6 w-6 animate-spin"
       viewBox="0 0 32 32"
       xmlns="http://www.w3.org/2000/svg"
     >
