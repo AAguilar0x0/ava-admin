@@ -1,17 +1,28 @@
 <script lang="ts">
+  import type { TSnackbarStatus } from '$lib/types/SnackbarStatus';
+  import { afterUpdate, getContext, onMount, tick } from 'svelte';
+  import type { ActionData } from './$types';
+
+  export let form: ActionData;
+
   let email = '';
   let password = '';
 
-  function login() {
-    console.log('login', { email, password });
-  }
+  const { pushSnackbar }: { pushSnackbar: (message: string, status: TSnackbarStatus) => void } =
+    getContext('snackbar');
+
+  onMount(async () => {
+    if (form?.status && form?.body) {
+      await tick();
+      pushSnackbar(form.body, 'error');
+    }
+  });
 </script>
 
-<div class="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+<div class="flex h-screen min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
   <div class="w-full max-w-md space-y-8">
     <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">Sign in</h2>
-    <form class="mt-8 space-y-6" method="POST" on:submit={login}>
-      <input type="hidden" name="remember" value="true" />
+    <form class="mt-8 space-y-6" method="post">
       <div class="-space-y-px rounded-md shadow-sm">
         <div>
           <label for="email" class="sr-only">Email address</label>
