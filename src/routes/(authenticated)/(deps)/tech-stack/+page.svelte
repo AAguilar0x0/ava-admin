@@ -73,7 +73,7 @@
 
   async function handDelete(id: string) {
     try {
-      let result = await fetch(`/api/tech-stacks/${id}`, { method: 'DELETE' });
+      let result = await fetch(`/api/tech-stack/${id}`, { method: 'DELETE' });
       if (!result.ok) throw new Error(result.statusText);
       pushSnackbar('Tech Stack deleted successfully!', 'success');
       refreshData();
@@ -84,7 +84,7 @@
 
   async function handleAdd() {
     try {
-      let result = await fetch('/api/tech-stacks', {
+      let result = await fetch('/api/tech-stack', {
         method: 'POST',
         body: JSON.stringify({
           name: inptName,
@@ -101,7 +101,7 @@
 
   async function handleEdit() {
     try {
-      let result = await fetch(`/api/tech-stacks/${techStackId}`, {
+      let result = await fetch(`/api/tech-stack/${techStackId}`, {
         method: 'PUT',
         body: JSON.stringify({
           name: inptName,
