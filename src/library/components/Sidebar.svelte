@@ -18,7 +18,7 @@
           <li>
             <a
               href={route}
-              class="flex h-12 transform flex-row items-center gap-2 text-gray-500 transition-transform duration-200 ease-in hover:translate-x-2 hover:text-gray-800"
+              class="flex h-12 transform flex-row items-center gap-2 !text-gray-500 transition-transform duration-200 ease-in hover:translate-x-2 hover:text-gray-800"
             >
               <span class="inline-flex h-5 w-5 items-center justify-center text-lg text-gray-400"
                 ><Icon {icon} /></span
@@ -27,6 +27,18 @@
             </a>
           </li>
         {/each}
+        <li>
+          <form action="/sign-out" method="POST">
+            <button
+              class="flex h-12 transform flex-row items-center gap-2 !text-gray-500 transition-transform duration-200 ease-in hover:translate-x-2 hover:text-gray-800"
+            >
+              <span class="inline-flex h-5 w-5 items-center justify-center text-lg text-gray-400"
+                ><Icon icon="mdi:logout" /></span
+              >
+              <span class="text-sm font-medium">Sign Out</span>
+            </button>
+          </form>
+        </li>
       </ul>
     </div>
     <div class="grow">
