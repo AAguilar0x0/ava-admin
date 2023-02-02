@@ -8,7 +8,12 @@ import type { PageLoad } from './$types';
 
 export const load = (async ({ fetch }) => {
   try {
-    const result = await Promise.all([fetch('/api/tech-stacks'), fetch('/api/projects')]);
+    const result = await Promise.all([fetch('/api/tech-stack'), fetch('/api/projects')]);
+    for (const response of result) {
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
+    }
     const [techStack, projects]: Array<ValidRecord[]> = await Promise.all(
       result.map((response) => response.json())
     );

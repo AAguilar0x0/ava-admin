@@ -7,12 +7,12 @@ export const POST = (async ({ fetch, request, locals }) => {
   if (!locals.user) {
     throw error(401, 'Unauthorized');
   }
-  return post(fetch, `${env.API_URL}/api/tech-stacks`, await request.text());
+  return post(fetch, `${env.API_URL}/api/tech-stack`, await request.text());
 }) satisfies RequestHandler;
 
 export const GET = (async ({ fetch, locals }) => {
   if (!locals.user) {
     throw error(401, 'Unauthorized');
   }
-  return getAll(fetch, `${env.API_URL}/api/tech-stacks`);
+  return getAll(fetch, `${env.API_URL}/api/tech-stack`);
 }) satisfies RequestHandler;
