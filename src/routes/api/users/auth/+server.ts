@@ -13,11 +13,18 @@ export const POST = (async ({ fetch, request }) => {
     });
   }
   try {
+    if (!env.JWT_SECRET) {
+      return new Response('Missing secret key for verification', {
+        status: 500,
+        statusText: 'Environment variable error'
+      });
+    }
     const data = jwt.verify(await result.json(), env.JWT_SECRET);
     return new Response(JSON.stringify(data));
   } catch (err) {
-    return new Response('Invalid token', {
-      status: 500
+    return new Response('Data is from untrusted source', {
+      status: 500,
+      statusText: 'Invalid token'
     });
   }
 }) satisfies RequestHandler;
