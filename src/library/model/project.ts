@@ -1,7 +1,7 @@
 export type Project = {
   id: string;
   name: string;
-  company: string;
+  description: string;
   repo: string;
   url: string;
   tech_stack: Array<string>;
@@ -10,7 +10,7 @@ export type Project = {
 export const defaultProject: Project = {
   id: '',
   name: '',
-  company: '',
+  description: '',
   repo: '',
   url: '',
   tech_stack: []

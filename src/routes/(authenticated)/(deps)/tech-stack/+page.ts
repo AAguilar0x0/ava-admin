@@ -5,7 +5,7 @@ import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 
 export const load = (async ({ fetch }) => {
-  const result = await fetch('/api/tech-stacks');
+  const result = await fetch('/api/tech-stack');
   if (result.ok) {
     const data = (await result.json()) as ValidRecord[];
     return {

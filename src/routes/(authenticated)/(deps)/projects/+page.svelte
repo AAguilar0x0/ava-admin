@@ -1,5 +1,6 @@
 <script lang="ts">
   import { getContext } from 'svelte';
+  import Editor from '@tinymce/tinymce-svelte';
   import Dialog, { Header, Title, Content, Actions } from '@smui/dialog';
   import IconButton from '@smui/icon-button';
   import Textfield from '@smui/textfield';
@@ -26,8 +27,10 @@
 
   let techStackInput: string | undefined = '';
 
+  let textDescription = '';
+
   let inptName = '';
-  let inptCompany = '';
+  let inptDescription = '';
   let inptRepo = '';
   let inptURL = '';
   let inptTechStack: Set<string> = new Set();
@@ -38,7 +41,7 @@
   let columns = [
     { name: 'ID' },
     { name: 'Name' },
-    { name: 'Company' },
+    { name: 'Description' },
     { name: 'Repo' },
     { name: 'URL' },
     {
@@ -59,7 +62,7 @@
               onClick: () => {
                 projectId = row.cells[0].data;
                 inptName = row.cells[1].data;
-                inptCompany = row.cells[2].data;
+                inptDescription = row.cells[2].data;
                 inptRepo = row.cells[3].data;
                 inptURL = row.cells[4].data;
                 inptTechStack = new Set(row.cells[5].data);
@@ -105,7 +108,7 @@
         method: 'POST',
         body: JSON.stringify({
           name: inptName,
-          company: inptCompany,
+          description: inptDescription,
           repo: inptRepo,
           url: inptURL,
           tech_stack: Array.from(inptTechStack)
@@ -125,7 +128,7 @@
         method: 'PUT',
         body: JSON.stringify({
           name: inptName,
-          company: inptCompany,
+          description: inptDescription,
           repo: inptRepo,
           url: inptURL,
           tech_stack: Array.from(inptTechStack)
@@ -145,13 +148,13 @@
       case MODAL_STATES[2]:
         let message = '';
         let nameLen = inptName.trim().length;
-        let companyLen = inptCompany.trim().length;
-        if (nameLen === 0 && companyLen === 0) {
-          message = 'Name and company is required.';
+        let descriptionLen = textDescription.trim().length;
+        if (nameLen === 0 && descriptionLen === 0) {
+          message = 'Name and description is required.';
         } else if (nameLen === 0) {
           message = 'Name is required.';
-        } else if (companyLen === 0) {
-          message = 'Company is required.';
+        } else if (descriptionLen === 0) {
+          message = 'Description is required.';
         }
         if (message.length !== 0) {
           pushSnackbar(message, 'error');
@@ -180,7 +183,7 @@
   <button
     on:click={() => {
       inptName = '';
-      inptCompany = '';
+      inptDescription = '';
       inptRepo = '';
       inptURL = '';
       inptTechStack = new Set();
@@ -199,21 +202,35 @@
   </Header>
   <Content id="fullscreen-content">
     <div class="grid grid-cols-2 gap-3">
-      <div>
-        <h2>Name</h2>
-        <Textfield bind:value={inptName} class="w-full" />
+      <div class="col-span-2 flex flex-row flex-wrap gap-3">
+        <div class="grow">
+          <h2>Name</h2>
+          <Textfield bind:value={inptName} class="w-full" />
+        </div>
+        <div class="grow">
+          <h2>Repo</h2>
+          <Textfield bind:value={inptRepo} class="w-full" />
+        </div>
+        <div class="grow">
+          <h2>URL</h2>
+          <Textfield bind:value={inptURL} class="w-full" />
+        </div>
       </div>
-      <div>
-        <h2>Company</h2>
-        <Textfield bind:value={inptCompany} class="w-full" />
-      </div>
-      <div>
-        <h2>Repo</h2>
-        <Textfield bind:value={inptRepo} class="w-full" />
-      </div>
-      <div>
-        <h2>URL</h2>
-        <Textfield bind:value={inptURL} class="w-full" />
+      <div class="col-span-2">
+        <h2>Description</h2>
+        <Editor
+          bind:value={inptDescription}
+          bind:text={textDescription}
+          scriptSrc="tinymce/tinymce.min.js"
+          cssClass="w-full"
+          conf={{
+            plugins: 'advlist lists wordcount pagebreak quickbars emoticons',
+            toolbar:
+              'undo redo | bold italic underline strikethrough | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist',
+            quickbars_image_toolbar: false,
+            quickbars_insert_toolbar: 'quicktable hr pagebreak'
+          }}
+        />
       </div>
       <h2 class="col-span-2">Tech Stack</h2>
       <div class="inline-flex h-fit">

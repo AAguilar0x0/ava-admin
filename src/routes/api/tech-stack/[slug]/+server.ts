@@ -7,19 +7,19 @@ export const GET = (async ({ fetch, params, locals }) => {
   if (!locals.user) {
     throw error(401, 'Unauthorized');
   }
-  return getOne(fetch, `${env.API_URL}/api/tech-stacks`, params.slug);
+  return getOne(fetch, `${env.API_URL}/api/tech-stack`, params.slug);
 }) satisfies RequestHandler;
 
 export const PUT = (async ({ fetch, request, params, locals }) => {
   if (!locals.user) {
     throw error(401, 'Unauthorized');
   }
-  return put(fetch, `${env.API_URL}/api/tech-stacks`, params.slug, await request.text());
+  return put(fetch, `${env.API_URL}/api/tech-stack`, params.slug, await request.text());
 }) satisfies RequestHandler;
 
 export const DELETE = (async ({ fetch, params, locals }) => {
   if (!locals.user) {
     throw error(401, 'Unauthorized');
   }
-  return del(fetch, `${env.API_URL}/api/tech-stacks`, params.slug);
+  return del(fetch, `${env.API_URL}/api/tech-stack`, params.slug);
 }) satisfies RequestHandler;
