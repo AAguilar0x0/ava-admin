@@ -165,7 +165,18 @@
     <Icon icon="mdi:plus-thick" class="text-3xl text-green-500 hover:text-green-700" />
   </button>
 </div>
-<Grid data={techStack} {columns} fixedHeader search resizable pagination sort />
+<Grid
+  data={techStack}
+  {columns}
+  fixedHeader
+  search
+  resizable
+  pagination
+  sort
+  className={{
+    td: 'max-w-sm'
+  }}
+/>
 <Dialog bind:open fullscreen>
   <Header>
     <Title id="fullscreen-title">Add/Edit Tech Stacks</Title>
