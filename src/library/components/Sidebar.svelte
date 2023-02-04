@@ -41,7 +41,7 @@
         </li>
       </ul>
     </div>
-    <div class="grow">
+    <div class="grow overflow-auto">
       <slot />
     </div>
   </div>
