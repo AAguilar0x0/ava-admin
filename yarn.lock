@@ -127,6 +127,18 @@
     minimatch "^3.1.2"
     strip-json-comments "^3.1.1"
 
+"@floating-ui/core@^1.1.0":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@floating-ui/core/-/core-1.1.1.tgz#cf8b4cdd8987c687329a6099561764d8a16f2f22"
+  integrity sha512-PL7g3dhA4dHgZfujkuD8Q+tfJJynEtnNQSPzmucCnxMvkxf4cLBJw/ZYqZUn4HCh33U3WHrAfv2R2tbi9UCSmw==
+
+"@floating-ui/dom@^1.0.10", "@floating-ui/dom@^1.0.4":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@floating-ui/dom/-/dom-1.1.1.tgz#66aa747e15894910869bf9144fc54fc7d6e9f975"
+  integrity sha512-TpIO93+DIujg3g7SykEAGZMDtbJRrmnYRCNYSjJlvIbGhBjRSNTLVbNeDQBrzy9qDgUbiWdc7KA0uZHZ2tJmiw==
+  dependencies:
+    "@floating-ui/core" "^1.1.0"
+
 "@humanwhocodes/config-array@^0.11.8":
   version "0.11.8"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.11.8.tgz#03595ac2075a4dc0f191cc2131de14fbd7d410b9"
@@ -2347,6 +2359,14 @@ svelte-check@^3.0.1:
     svelte-preprocess "^5.0.0"
     typescript "^4.9.4"
 
+svelte-floating-ui@1.1.6:
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/svelte-floating-ui/-/svelte-floating-ui-1.1.6.tgz#1dd8e0684addc59f8ec41e50dfd95445123d7ee1"
+  integrity sha512-lJfrc34+xSxKs+5AtnYj32uRIjaxGjhT92cOiNL3zEqaJ755JxUqXCf6tk+9G1wkCuqkK9A8tscVBsyY3iLmVQ==
+  dependencies:
+    "@floating-ui/dom" "^1.0.4"
+    svelte2tsx "^0.5.11"
+
 svelte-hmr@^0.15.1:
   version "0.15.1"
   resolved "https://registry.yarnpkg.com/svelte-hmr/-/svelte-hmr-0.15.1.tgz#d11d878a0bbb12ec1cba030f580cd2049f4ec86b"
@@ -2364,7 +2384,15 @@ svelte-preprocess@^5.0.0:
     sorcery "^0.10.0"
     strip-indent "^3.0.0"
 
-svelte2tsx@^0.5.12:
+svelte-select@^5.1.4:
+  version "5.1.4"
+  resolved "https://registry.yarnpkg.com/svelte-select/-/svelte-select-5.1.4.tgz#06ff3a77367ca1633f2c623450821574eb252547"
+  integrity sha512-9bqndhnCVhkONTE5bOiLCjpkGjYJzdYeZcjFqaNz4f4GWE0ahCZgULtz0tBC1hDXqTDkITePYqmKN9L6tKIT2g==
+  dependencies:
+    "@floating-ui/dom" "^1.0.10"
+    svelte-floating-ui "1.1.6"
+
+svelte2tsx@^0.5.11, svelte2tsx@^0.5.12:
   version "0.5.23"
   resolved "https://registry.yarnpkg.com/svelte2tsx/-/svelte2tsx-0.5.23.tgz#e20c464b3250f97902994d3784a57e87ca86a849"
   integrity sha512-jYFnugTQRFmUpvLXPQrKzVYcW5ErT+0QCxg027Zx9BuvYefMZFuoBSTDYe7viPEFGrPPiLgT2m7f5n9khE7f7Q==
