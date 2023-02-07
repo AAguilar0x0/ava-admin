@@ -5,19 +5,20 @@
   import IconButton from '@smui/icon-button';
   import Textfield from '@smui/textfield';
   import Button, { Label } from '@smui/button';
-  import Select, { Option } from '@smui/select';
+  import Select from 'svelte-select';
   import Icon from '@iconify/svelte';
   import { h } from 'gridjs';
   import Grid from 'gridjs-svelte';
   import type { PageData } from './$types';
   import type { TSnackbarStatus } from '$lib/types/SnackbarStatus';
   import { invalidateAll } from '$app/navigation';
+  import type TechStack from '$lib/model/techStack';
 
   const MODAL_STATES = ['Init', 'Add', 'Edit'] as const;
   type ModalState = (typeof MODAL_STATES)[number];
 
   export let data: PageData;
-  $: techStack = new Set(data?.techStack?.map((val) => val.name) ?? []);
+  $: techStack = data?.techStack ?? [];
   $: experiences = data?.experiences ?? [];
 
   const { pushSnackbar }: { pushSnackbar: (message: string, status: TSnackbarStatus) => void } =
@@ -25,7 +26,6 @@
 
   let open = false;
 
-  let techStackInput: string | undefined = '';
   let textDescription = '';
 
   let inptRole = '';
@@ -33,7 +33,7 @@
   let inptDescription = '';
   let inptStart = '';
   let inptEnd = '';
-  let inptTechStack: Set<string> = new Set();
+  let inptTechStack: TechStack[] | undefined = [];
   let modalState: ModalState;
 
   let experienceId = '';
@@ -93,15 +93,23 @@
               className:
                 'py-2 mb-4 px-4 border rounded-md text-white bg-blue-500 hover:bg-blue-700',
               onClick: () => {
-                experienceId = row.cells[0].data;
-                inptRole = row.cells[1].data;
-                inptCompany = row.cells[2].data;
-                inptDescription = row.cells[3].data;
-                inptStart = row.cells[4].data.split(':', 2).join(':');
-                inptEnd = row.cells[5].data.split(':', 2).join(':');
-                inptTechStack = new Set(row.cells[6].data);
-                modalState = MODAL_STATES[2];
-                open = true;
+                try {
+                  experienceId = row.cells[0].data;
+                  inptRole = row.cells[1].data;
+                  inptCompany = row.cells[2].data;
+                  inptDescription = row.cells[3].data;
+                  inptStart = row.cells[4].data.split(':', 2).join(':');
+                  inptEnd = row.cells[5].data.split(':', 2).join(':');
+                  inptTechStack = (row.cells[6].data as string[]).map((val) => {
+                    const result = techStack.find((innerVal) => innerVal.name === val);
+                    if (result === undefined) throw new Error('Tech stack not found');
+                    return result;
+                  });
+                  modalState = MODAL_STATES[2];
+                  open = true;
+                } catch (error) {
+                  pushSnackbar(`Unable to proceed: ${(error as Error).message}`, 'error');
+                }
               }
             },
             'Edit'
@@ -120,6 +128,8 @@
       }
     }
   ];
+
+  const groupBy = (val: TechStack) => val.category;
 
   async function refreshData() {
     invalidateAll();
@@ -147,7 +157,7 @@
           description: inptDescription,
           start: new Date(inptStart).toISOString(),
           end: inptEnd.length === 0 ? '' : new Date(inptEnd).toISOString(),
-          tech_stack: Array.from(inptTechStack)
+          tech_stack: inptTechStack?.map((val) => val.name) ?? []
         })
       });
       if (!result.ok) throw new Error(result.statusText);
@@ -169,7 +179,7 @@
           description: inptDescription,
           start: new Date(inptStart).toISOString(),
           end: inptEnd.length === 0 ? '' : new Date(inptEnd).toISOString(),
-          tech_stack: Array.from(inptTechStack)
+          tech_stack: inptTechStack?.map((val) => val.name) ?? []
         })
       });
       if (!result.ok) throw new Error(result.statusText);
@@ -216,10 +226,10 @@
     on:click={() => {
       inptRole = '';
       inptCompany = '';
-      inptDescription = '';
+      inptDescription = '<p></p>';
       inptStart = '';
       inptEnd = '';
-      inptTechStack = new Set();
+      inptTechStack = [];
       modalState = MODAL_STATES[1];
       open = true;
     }}
@@ -278,48 +288,16 @@
           }}
         />
       </div>
-      <h2 class="col-span-2">Tech Stack</h2>
-      <div class="inline-flex h-fit">
-        <Select bind:value={techStackInput} class="w-full">
-          {#each Array.from(techStack).filter((value) => !inptTechStack.has(value)) as tech}
-            <Option value={tech}>{tech}</Option>
-          {/each}
-        </Select>
-        <button
-          disabled={!techStackInput || techStackInput.trim().length === 0}
-          on:click={() => {
-            // @ts-ignore - because this wont execute if the button is disabled which also happens when the variable is undefined
-            inptTechStack.add(techStackInput);
-            inptTechStack = inptTechStack;
-            techStackInput = '';
-          }}
-        >
-          <Icon
-            icon="mdi:plus-thick"
-            class={`text-3xl ${
-              !techStackInput || techStackInput.trim().length === 0
-                ? ''
-                : 'text-green-500 hover:text-green-700'
-            }`}
-          />
-        </button>
-      </div>
-      <div>
-        <div class="flex flex-col gap-1">
-          {#each Array.from(inptTechStack) as techStack}
-            <div class="flex flex-row flex-wrap justify-between rounded-sm bg-neutral-50 px-1">
-              <span>{techStack}</span>
-              <button
-                on:click={() => {
-                  inptTechStack.delete(techStack);
-                  inptTechStack = inptTechStack;
-                }}
-              >
-                <Icon icon="mdi:minus-thick" class="text-red-500 hover:text-red-700" />
-              </button>
-            </div>
-          {/each}
-        </div>
+      <div class="col-span-2">
+        <h2>Tech Stack</h2>
+        <Select
+          items={techStack}
+          multiple={true}
+          bind:value={inptTechStack}
+          itemId="id"
+          label="name"
+          {groupBy}
+        />
       </div>
     </div>
   </Content>
